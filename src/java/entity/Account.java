@@ -4,54 +4,51 @@
  */
 package entity;
 
-import java.sql.Date;
-
 /**
  *
  * @author SE18-CE180628-Nguyen Pham Doan Trang
  */
 public class Account {
-    private int id;
+
+    private int accountId;
     private String username;
     private String password;
     private String email;
-    private Date date;
-    private int isAdmin;
-    private int isUser;
+    private boolean isAdmin;
 
     public Account() {
     }
 
-    public Account(int id, String username, String password, String email, int isAdmin, int isUser) {
-        this.id = id;
+    public Account(int accountId, String username, String password, String email, boolean isAdmin) {
+        this.accountId = accountId;
         this.username = username;
         this.password = password;
         this.email = email;
         this.isAdmin = isAdmin;
-        this.isUser = isUser;
     }
 
-    public int getId() {
-        return id;
+    // Getters and Setters
+    public int getAccountId() {
+        return accountId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setAccountId(int accountId) {
+        this.accountId = accountId;
     }
 
-    public String getUserName() {
+    public String getUsername() {
         return username;
     }
 
-    public void setUserName(String username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 
-    public String getPassWord() {
+    public String getPassword() {
         return password;
     }
 
-    public void setPassWord(String password) {
+    public void setPassword(String password) {
         this.password = password;
     }
 
@@ -63,30 +60,11 @@ public class Account {
         this.email = email;
     }
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public int getIsAdmin() {
+    public boolean isAdmin() {
         return isAdmin;
     }
 
-    public void setIsAdmin(int isAdmin) {
+    public void setAdmin(boolean isAdmin) {
         this.isAdmin = isAdmin;
     }
-
-    public int getIsUser() {
-        return isUser;
-    }
-
-    public void setIsUser(int isUser) {
-        this.isUser = isUser;
-    }
-    
-    
-    
 }

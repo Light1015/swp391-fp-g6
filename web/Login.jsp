@@ -28,11 +28,11 @@
             </div>
 
             <div class="form-container login-container">
-                <form action="login" method="post" onsubmit="return validateForm()">
+                <form action="login" method="post" onsubmit="">
                     <h1>Login here.</h1>
-                    <input name="username" type="text" id="inputEmail" placeholder="Username" required="" autofocus="" />
-                    <input type="email" name="email" placeholder="Email" />
-                    <input name="password" type="password" id="inputPassword" placeholder="Password" required="" />
+                    <input name="username" type="text" id="username" placeholder="Username" required="" autofocus="" />
+                    <!--<input type="email" name="email" placeholder="Email" />-->
+                    <input name="password" type="password" id="password" placeholder="Password" required="" />
                     <div class="content">
                         <div class="checkbox">
                             <input type="checkbox" name="checkbox" id="checkbox" />
