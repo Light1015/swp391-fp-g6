@@ -56,4 +56,14 @@ public class AccountDAO {
         return null;
     }
 
+    public boolean updateAccount(int accountId, String fullName, String phone) throws SQLException, ClassNotFoundException {
+        String sql = "UPDATE account SET fullName = ?, phone = ? WHERE accountId = ?";
+        try ( Connection conn = DBConnect.connect();  PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, fullName);
+            stmt.setString(2, phone);
+            stmt.setInt(3, accountId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
 }

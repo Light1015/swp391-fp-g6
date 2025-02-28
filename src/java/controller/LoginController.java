@@ -31,23 +31,29 @@ public class LoginController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try {
-            // Changed from username to user to match form parameter
             String username = request.getParameter("username");
-            // Changed from password to pass to match form parameter
             String password = request.getParameter("password");
 
             AccountDAO accountDAO = new AccountDAO();
             Account account = accountDAO.login(username, password);
 
-            if (account == null) {
-                // Set error message and return to login page with script to show popup
-                String errorScript = "<script>alert('Wrong username or password!'); window.location='Login.jsp';</script>";
+            if (account == null || !account.getPassword().equals(password)) {
+                String errorScript = "<script>alert('Sai tên đăng nhập hoặc mật khẩu!'); window.location='Login.jsp';</script>";
                 response.getWriter().println(errorScript);
             } else {
                 HttpSession session = request.getSession();
-                response.sendRedirect("home");
+                session.setAttribute("account", account); // Lưu Object Account
+                session.setAttribute("accountId", account.getAccountId()); // Lưu ID
+
+                session.setMaxInactiveInterval(1000);
+
+                if (account.isRole()) {
+                    response.sendRedirect("adminDashboard.jsp");
+                } else {
+                    response.sendRedirect("Home.jsp");
+                }
             }
-        } catch (ClassNotFoundException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

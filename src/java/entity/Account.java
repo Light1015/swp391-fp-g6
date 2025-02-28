@@ -14,20 +14,19 @@ public class Account {
     private String username;
     private String password;
     private String email;
-    private boolean isAdmin;
+    private boolean role; // true: admin, false: user
 
     public Account() {
     }
 
-    public Account(int accountId, String username, String password, String email, boolean isAdmin) {
+    public Account(int accountId, String username, String password, String email, boolean role) {
         this.accountId = accountId;
         this.username = username;
         this.password = password;
         this.email = email;
-        this.isAdmin = isAdmin;
+        this.role = role;
     }
 
-    // Getters and Setters
     public int getAccountId() {
         return accountId;
     }
@@ -60,11 +59,14 @@ public class Account {
         this.email = email;
     }
 
-    public boolean isAdmin() {
-        return isAdmin;
+    public boolean isRole() {
+        return role;
     }
 
-    public void setAdmin(boolean isAdmin) {
-        this.isAdmin = isAdmin;
+    public void setRole(boolean role) {
+        this.role = role;
     }
+     
+    
+    
 }
