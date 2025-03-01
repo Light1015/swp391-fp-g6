@@ -40,7 +40,7 @@ public class UserDAO {
     }
 
     public boolean updateUser(int accountId, String fullName, String phone, String address, String image) throws ClassNotFoundException {
-        String sql = "UPDATE User SET full_name = ?, phone = ?, address = ?, image = ? WHERE account_id = ?";
+        String sql = "UPDATE User_Profile SET full_name = ?, phone = ?, address = ?, image = ? WHERE account_id = ?";
         try ( Connection conn = DBConnect.connect();  PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, fullName);
             ps.setString(2, phone);
@@ -55,69 +55,5 @@ public class UserDAO {
         return false;
     }
 
-    public boolean changePassword(int accountId, String oldPassword, String newPassword) throws ClassNotFoundException {
-        Connection conn = null;
-        PreparedStatement pstmtCheck = null;
-        PreparedStatement pstmtUpdate = null;
-        ResultSet rs = null;
-
-        try {
-            conn = DBConnect.connect();
-            conn.setAutoCommit(false);
-
-            String queryCheck = "SELECT password FROM Account WHERE account_id = ?";
-            pstmtCheck = conn.prepareStatement(queryCheck);
-            pstmtCheck.setInt(1, accountId);
-            rs = pstmtCheck.executeQuery();
-
-            if (rs.next()) {
-                String currentPassword = rs.getString("password");
-
-                if (!currentPassword.equals(oldPassword)) {
-                    System.out.println("Error: Mật khẩu cũ không đúng!");
-                    return false;
-                }
-            } else {
-                System.out.println("Error: Không tìm thấy tài khoản!");
-                return false;
-            }
-
-            String queryUpdate = "UPDATE Account SET password = ? WHERE account_id = ?";
-            pstmtUpdate = conn.prepareStatement(queryUpdate);
-            pstmtUpdate.setString(1, newPassword);
-            pstmtUpdate.setInt(2, accountId);
-            pstmtUpdate.executeUpdate();
-
-            conn.commit();
-            return true;
-
-        } catch (SQLException e) {
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (SQLException rollbackEx) {
-                    rollbackEx.printStackTrace();
-                }
-            }
-            e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (pstmtCheck != null) {
-                    pstmtCheck.close();
-                }
-                if (pstmtUpdate != null) {
-                    pstmtUpdate.close();
-                }
-                if (conn != null) {
-                    conn.setAutoCommit(true);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return false;
-    }
+    
 }

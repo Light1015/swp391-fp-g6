@@ -53,7 +53,7 @@
 
                                 <c:if test="${not empty sessionScope.account}">
                                     <a class="nav-link" href="UserProfile.jsp">Hello, ${sessionScope.account.username}</a>
-                                    <a class="nav-link" href="LogoutServlet">Logout</a>
+                                    <a class="nav-link" href="logout">Logout</a>
                                 </c:if>  
 
                                 <a href="#" class="cart for-buy"><i class="icon icon-clipboard"></i></a>
