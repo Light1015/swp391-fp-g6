@@ -33,21 +33,21 @@ public class ChangePasswordServlet extends HttpServlet {
             return;
         }
 
-        Integer accountId = (Integer) session.getAttribute("accountId");
-        String username = (String) session.getAttribute("username");
+        Account account = (Account) session.getAttribute("account");
+        Integer accountId = account.getAccountId();
 
         String currentPassword = request.getParameter("currentPassword");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
 
         if (!newPassword.equals(confirmPassword)) {
-            session.setAttribute("errorMessage", "Mật khẩu mới và xác nhận mật khẩu không khớp.");
+            session.setAttribute("errorMessage", "Mật khẩu mới và xác nhận không khớp.");
             response.sendRedirect("UserProfile.jsp?tab=changePassword");
             return;
         }
 
         if (newPassword.length() < 8 || !newPassword.matches(".*[A-Z].*") || !newPassword.matches(".*\\d.*")) {
-            session.setAttribute("errorMessage", "Mật khẩu mới phải có ít nhất 8 ký tự, một chữ hoa và một số.");
+            session.setAttribute("errorMessage", "Mật khẩu phải có ít nhất 8 ký tự, một chữ hoa và một số.");
             response.sendRedirect("UserProfile.jsp?tab=changePassword");
             return;
         }
@@ -59,15 +59,15 @@ public class ChangePasswordServlet extends HttpServlet {
 
             if (isPasswordChanged) {
                 session.setAttribute("successMessage", "Đổi mật khẩu thành công.");
+                response.sendRedirect("UserProfile.jsp?tab=changePassword");
             } else {
                 session.setAttribute("errorMessage", "Mật khẩu hiện tại không đúng.");
+                response.sendRedirect("UserProfile.jsp?tab=changePassword");
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ChangePasswordServlet.class.getName()).log(Level.SEVERE, null, ex);
             session.setAttribute("errorMessage", "Đã xảy ra lỗi. Vui lòng thử lại sau.");
+            response.sendRedirect("UserProfile.jsp?tab=changePassword");
         }
-
-        response.sendRedirect("UserProfile.jsp?tab=changePassword");
     }
-
 }

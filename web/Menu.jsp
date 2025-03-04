@@ -3,8 +3,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%
-    Account account = (Account) session.getAttribute("account");
+    Account acc = (Account) session.getAttribute("account");
 %>
+
 
 <!DOCTYPE html>
 <html>

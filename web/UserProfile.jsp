@@ -212,22 +212,33 @@
     <body>
 
         <!-- Popup Notification System -->
-        <div id="successNotification" class="notification-popup success">
-            <strong>Thành công!</strong> Cập nhật thông tin thành công.
+        <div id="successNotification" class="notification-popup success" style="display:none;">
+            <strong>Thành công!</strong> <span id="successMessage"></span>
         </div>
-        <div id="errorNotification" class="notification-popup error">
-            <strong>Thất bại!</strong> Cập nhật thông tin thất bại.
+        <div id="errorNotification" class="notification-popup error" style="display:none;">
+            <strong>Thất bại!</strong> <span id="errorMessage"></span>
         </div>
 
         <% if (session.getAttribute("errorMessage") != null) { %>
-        <div class="alert alert-danger"><%= session.getAttribute("errorMessage") %></div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                document.getElementById('errorMessage').innerText = '<%= session.getAttribute("errorMessage") %>';
+                showNotification('errorNotification');
+            });
+        </script>
         <% session.removeAttribute("errorMessage"); %>
         <% } %>
 
         <% if (session.getAttribute("successMessage") != null) { %>
-        <div class="alert alert-success"><%= session.getAttribute("successMessage") %></div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                document.getElementById('successMessage').innerText = '<%= session.getAttribute("successMessage") %>';
+                showNotification('successNotification');
+            });
+        </script>
         <% session.removeAttribute("successMessage"); %>
         <% } %>
+
 
 
         <!-- Navbar -->
@@ -459,12 +470,10 @@
             function showNotification(type) {
                 const notification = document.getElementById(type + 'Notification');
                 notification.classList.add('show');
-
                 // Hide after 3 seconds
                 setTimeout(() => {
                     notification.classList.remove('show');
                     notification.classList.add('hide');
-
                     // Remove hide class after animation completes
                     setTimeout(() => {
                         notification.classList.remove('hide');
@@ -478,18 +487,14 @@
                 document.querySelectorAll('.tab-pane').forEach(tab => {
                     tab.classList.remove('show', 'active');
                 });
-
                 // Remove active class from sidebar links
                 document.querySelectorAll('.sidebar a').forEach(link => {
                     link.classList.remove('active');
                 });
-
                 // Show selected tab
                 document.getElementById(tabId).classList.add('show', 'active');
-
                 // Add active class to sidebar link
                 document.getElementById('sidebar-' + tabId).classList.add('active');
-
                 // Update URL with tab parameter without refreshing
                 const url = new URL(window.location.href);
                 url.searchParams.set('tab', tabId);
@@ -500,7 +505,6 @@
             document.addEventListener('DOMContentLoaded', function () {
                 const urlParams = new URLSearchParams(window.location.search);
                 const success = urlParams.get('success');
-
                 if (success === 'true') {
                     showNotification('success');
                 } else if (success === 'false') {
@@ -514,20 +518,15 @@
                     window.history.replaceState({}, document.title, url);
                 }
             });
-
-            document.querySelector("form").addEventListener("submit", function (event) {
-                let newPassword = document.querySelector("input[name='newPassword']").value;
-                let confirmPassword = document.querySelector("input[name='confirmPassword']").value;
-
-                if (newPassword.length < 8 || !/[A-Z]/.test(newPassword) || !/\d/.test(newPassword)) {
-                    alert("Mật khẩu phải có ít nhất 8 ký tự, một chữ hoa và một số.");
-                    event.preventDefault();
-                } else if (newPassword !== confirmPassword) {
-                    alert("Mật khẩu mới và xác nhận mật khẩu không khớp.");
-                    event.preventDefault();
-                }
-            });
-
+            function showNotification(id) {
+                var notification = document.getElementById(id);
+                notification.style.display = 'block'; // Make it visible
+                notification.classList.add('show');
+                setTimeout(function () {
+                    notification.classList.remove('show');
+                    notification.style.display = 'none'; // Hide it after the animation
+                }, 3000); // 3 seconds
+            }
         </script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>

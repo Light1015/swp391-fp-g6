@@ -14,27 +14,25 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private boolean isUser; // 0 = user, 1 = admin
+    private boolean role; // 0 = user, 1 = admin
     private String fullName;
     private String phone;
     private String address;
     private String image;
-    private boolean isMember; // 0: không phải thành viên, 1: thành viên VIP
 
     public User() {
     }
 
-    public User(int accountId, String username, String password, String email, boolean isUser, String fullName, String phone, String address, String image, boolean isMember) {
+    public User(int accountId, String username, String password, String email, boolean role, String fullName, String phone, String address, String image) {
         this.accountId = accountId;
         this.username = username;
         this.password = password;
         this.email = email;
-        this.isUser = isUser;
+        this.role = role;
         this.fullName = fullName;
         this.phone = phone;
         this.address = address;
         this.image = image;
-        this.isMember = isMember;
     }
 
     public int getAccountId() {
@@ -69,12 +67,12 @@ public class User {
         this.email = email;
     }
 
-    public boolean isIsUser() {
-        return isUser;
+    public boolean isRole() {
+        return role;
     }
 
-    public void setIsUser(boolean isUser) {
-        this.isUser = isUser;
+    public void setRole(boolean role) {
+        this.role = role;
     }
 
     public String getFullName() {
@@ -109,14 +107,4 @@ public class User {
         this.image = image;
     }
 
-    public boolean isIsMember() {
-        return isMember;
-    }
-
-    public void setIsMember(boolean isMember) {
-        this.isMember = isMember;
-    }
-    
-    
-    
 }

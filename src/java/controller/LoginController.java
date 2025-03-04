@@ -50,7 +50,11 @@ public class LoginController extends HttpServlet {
                 if (account.isRole()) {
                     response.sendRedirect("adminDashboard.jsp");
                 } else {
-                    response.sendRedirect("Home.jsp");
+                    session.setAttribute("account", account);
+                    session.setMaxInactiveInterval(1000);
+                    response.sendRedirect("home");
+                    //request.getRequestDispatcher("Home.jsp").forward(request, response);
+
                 }
             }
         } catch (Exception ex) {
