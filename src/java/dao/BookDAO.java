@@ -307,6 +307,63 @@ public class BookDAO {
         return book;
     }
 
+    // Phương thức này sẽ tìm các sách có cùng thể loại hoặc cùng tác giả với sách hiện tại.
+    public List<Book> getSimilarBooks(int bookId) throws ClassNotFoundException {
+        List<Book> books = new ArrayList<>();
+        String sql = "SELECT TOP 4 b.*, a.name AS authorName, "
+                + "   (SELECT STRING_AGG(c.name, ', ') FROM BookCategory bc "
+                + "    JOIN Category c ON bc.category_id = c.category_id WHERE bc.book_id = b.book_id) AS categories "
+                + "FROM Books b "
+                + "JOIN Author a ON b.author_id = a.author_id "
+                + "WHERE b.book_id <> ? "
+                + "AND (b.author_id = (SELECT author_id FROM Books WHERE book_id = ?) "
+                + "     OR b.book_id IN (SELECT book_id FROM BookCategory WHERE category_id IN "
+                + "        (SELECT category_id FROM BookCategory WHERE book_id = ?))) "
+                + "ORDER BY NEWID()";
+
+        try {
+            conn = new DBConnect().connect();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, bookId);
+            ps.setInt(2, bookId);
+            ps.setInt(3, bookId);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Book book = extractBookFromResultSet(rs);
+                books.add(book);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources();
+        }
+        return books;
+    }
+
+    // Get categories for a specific book
+    public String getCategoriesForBook(int bookId) throws ClassNotFoundException {
+        String categories = "";
+        String sql = "SELECT STRING_AGG(c.name, ', ') AS categories "
+                + "FROM BookCategory bc "
+                + "JOIN Category c ON bc.category_id = c.category_id "
+                + "WHERE bc.book_id = ?";
+        try {
+            conn = new DBConnect().connect();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, bookId);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                categories = rs.getString("categories");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources();
+        }
+        return categories;
+    }
+
     // Đóng tài nguyên
     private void closeResources() {
         try {

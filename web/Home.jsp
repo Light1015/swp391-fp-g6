@@ -80,7 +80,6 @@
         </section>
 
         <!-- Some quality items Featured Books -->
-        <!-- Some quality items Featured Books -->
         <!-- Featured Books -->
         <section id="featured-books" class="py-5 my-5">
             <div class="container">
