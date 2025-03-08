@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  *
@@ -28,6 +29,12 @@ public class BookDAO {
     PreparedStatement ps = null;
     ResultSet rs = null;
 
+//
+//    private Connection conn;
+//
+//    public BookDAO(Connection conn) {
+//        this.conn = conn;
+//    }
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
         BookDAO dao = new BookDAO();
         List<Book> list = dao.getAllBooks();
@@ -38,264 +45,282 @@ public class BookDAO {
         }
     }
 
-    // Lấy ra tất cả các sách có trong hệ thống
-    public List<Book> getAllBooks() throws ClassNotFoundException, SQLException {
-        List<Book> list = new ArrayList<>();
-        String query = "SELECT * FROM Books";
-
+    // Lấy danh sách tất cả sách kèm tên tác giả và thể loại
+    public List<Book> getAllBooks() throws ClassNotFoundException {
+        List<Book> books = new ArrayList<>();
+        String sql = "SELECT b.*, a.name AS authorName, s.name AS seriesName, "
+                + "(SELECT STRING_AGG(c.name, ', ') FROM BookCategory bc "
+                + "JOIN Category c ON bc.category_id = c.category_id WHERE bc.book_id = b.book_id) AS categories "
+                + "FROM Books b "
+                + "JOIN Author a ON b.author_id = a.author_id "
+                + "LEFT JOIN BookSeries s ON b.series_id = s.series_id";
         try {
             conn = new DBConnect().connect();
-            ps = conn.prepareStatement(query);
+            ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
-
             while (rs.next()) {
-                list.add(new Book(rs.getInt("book_id"),
-                        rs.getString("title"),
-                        rs.getString("author"),
-                        rs.getString("description"),
-                        rs.getDouble("price"),
-                        rs.getString("cover_image"),
-                        rs.getString("file_path")));
+                Book book = new Book(
+                        rs.getInt("book_id"), rs.getString("title"), rs.getInt("author_id"), rs.getString("description"),
+                        rs.getDouble("price"), rs.getString("cover_image"), rs.getString("file_path"), rs.getString("publisher"),
+                        rs.getInt("publication_year"), rs.getInt("stock_quantity"), rs.getString("language"),
+                        rs.getInt("series_id"), rs.getInt("volume_number"), rs.getString("book_type"), rs.getInt("created_by")
+                );
+                book.setAuthorName(rs.getString("authorName"));
+                book.setSeriesName(rs.getString("seriesName"));
+                book.setCategories(rs.getString("categories"));
+                books.add(book);
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            // Close resources in a finally block
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace(); // Handle any potential exceptions while closing
-            }
+            closeResources();
         }
-        return list;
+        return books;
     }
 
+    // Lấy sách theo ID
+    public Book getBookById(int bookId) throws ClassNotFoundException {
+        String sql = "SELECT b.*, a.name AS authorName, s.name AS seriesName, "
+                + "(SELECT STRING_AGG(c.name, ', ') FROM BookCategory bc "
+                + "JOIN Category c ON bc.category_id = c.category_id WHERE bc.book_id = b.book_id) AS categories "
+                + "FROM Books b "
+                + "JOIN Author a ON b.author_id = a.author_id "
+                + "LEFT JOIN BookSeries s ON b.series_id = s.series_id "
+                + "WHERE b.book_id = ?";
+        try {
+            conn = new DBConnect().connect();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, bookId);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                Book book = new Book(
+                        rs.getInt("book_id"), rs.getString("title"), rs.getInt("author_id"), rs.getString("description"),
+                        rs.getDouble("price"), rs.getString("cover_image"), rs.getString("file_path"), rs.getString("publisher"),
+                        rs.getInt("publication_year"), rs.getInt("stock_quantity"), rs.getString("language"),
+                        rs.getInt("series_id"), rs.getInt("volume_number"), rs.getString("book_type"), rs.getInt("created_by")
+                );
+                book.setAuthorName(rs.getString("authorName"));
+                book.setSeriesName(rs.getString("seriesName"));
+                book.setCategories(rs.getString("categories"));
+                return book;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources();
+        }
+        return null;
+    }
+
+    // Lấy danh sách tất cả danh mục
     public List<Category> getAllCategory() {
         List<Category> list = new ArrayList<>();
         String query = "SELECT * FROM Category";
         try {
-            conn = new DBConnect().connect();//mo ket noi voi sql
+            conn = new DBConnect().connect();
             ps = conn.prepareStatement(query);
             rs = ps.executeQuery();
             while (rs.next()) {
-                list.add(new Category(rs.getInt(1),
-                        rs.getString(2)));
-            }
-        } catch (Exception e) {
-        }
-        return list;
-    }
-
-    public List<Book> getBookById(int book_id) {
-        List<Book> list = new ArrayList<>();
-        String query = "SELECT * FROM Books\n"
-                + "WHERE book_id = ?";
-        try {
-            conn = new DBConnect().connect();//mo ket noi voi sql
-            ps = conn.prepareStatement(query);
-            ps.setInt(1, book_id);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                list.add(new Book(rs.getInt("book_id"),
-                        rs.getString("title"),
-                        rs.getString("author"),
-                        rs.getString("description"),
-                        rs.getDouble("price"),
-                        rs.getString("cover_image"),
-                        rs.getString("file_path")));
-            }
-        } catch (Exception e) {
-        }
-        return list;
-    }
-
-    public List<Map<String, String>> getRandomBooks() {
-        List<Map<String, String>> books = new ArrayList<>();
-        String query = "SELECT TOP 5 [cover_image], [description] FROM Books ORDER BY NEWID()";
-
-        try {
-            conn = new DBConnect().connect(); // Mở kết nối
-            ps = conn.prepareStatement(query);
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                String imageUrl = rs.getString("cover_image");
-                String desc = rs.getString("description");
-
-                // Nếu ảnh rỗng, đặt ảnh mặc định
-                if (imageUrl == null || imageUrl.trim().isEmpty()) {
-                    imageUrl = "./images/default-cover-book-1.jpg";
-                }
-                // Nếu mô tả rỗng, đặt mô tả mặc định
-                if (desc == null || desc.trim().isEmpty()) {
-                    desc = "No description available.";
-                }
-
-                // Lưu thông tin vào Map
-                Map<String, String> book = new HashMap<>();
-                book.put("cover_image", imageUrl);
-                book.put("description", desc);
-                books.add(book);
-            }
-
-            // Nếu số lượng sách lấy ra không đủ 5, thêm sách mặc định
-            while (books.size() < 5) {
-                Map<String, String> defaultBook = new HashMap<>();
-                defaultBook.put("cover_image", "./images/default-cover-book-1.jpg");
-                defaultBook.put("description", "No description available.");
-                books.add(defaultBook);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace(); // Log lỗi
-            // Nếu có lỗi, thêm 5 sách mặc định
-            books.clear();
-            for (int i = 0; i < 5; i++) {
-                Map<String, String> defaultBook = new HashMap<>();
-                defaultBook.put("cover_image", "./images/default-cover-book-1.jpg");
-                defaultBook.put("description", "No description available.");
-                books.add(defaultBook);
-            }
-        } finally {
-            // Đóng kết nối
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return books;
-    }
-
-    public List<Book> getSort() {
-        String query = "SELECT * FROM Books\n"
-                + "ORDER BY book_id ASC";
-        List<Book> list = new ArrayList<>();
-        try {
-            conn = new DBConnect().connect();//mo ket noi voi sql
-            ps = conn.prepareStatement(query);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                list.add(new Book(rs.getInt("book_id"),
-                        rs.getString("title"),
-                        rs.getString("author"),
-                        rs.getString("description"),
-                        rs.getDouble("price"),
-                        rs.getString("cover_image"),
-                        rs.getString("file_path")));
-            }
-        } catch (Exception e) {
-        }
-        return list;
-    }
-
-    public List<Book> getTop4() {
-        List<Book> list = new ArrayList<>();
-        String query = "SELECT TOP 4 * FROM Books ORDER BY NEWID()";
-        try {
-            conn = new DBConnect().connect(); // Mở kết nối
-            ps = conn.prepareStatement(query);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                list.add(new Book(
-                        rs.getInt(1),
-                        rs.getString(2),
-                        rs.getString(3),
-                        rs.getString(4),
-                        rs.getDouble(5),
-                        rs.getString(6),
-                        rs.getString(7)
-                ));
+                list.add(new Category(rs.getInt("category_id"), rs.getString("name")));
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            // Đóng kết nối
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            closeResources();
         }
-
-        // In ra console để kiểm tra
-        System.out.println("Số lượng sách lấy được: " + list.size());
-        for (Book book : list) {
-            System.out.println(book);
-        }
-
         return list;
     }
 
-    public List<Book> getTopBooksByCategory(int categoryId) {
+    // Lấy sách theo danh mục
+    public List<Book> getBooksByCategory(int categoryId) throws ClassNotFoundException {
         List<Book> books = new ArrayList<>();
-        String sql = "SELECT TOP (8) b.book_id, b.title, b.author, b.description, b.price, b.cover_image, b.file_path "
+        String sql = "SELECT b.*, a.name AS authorName, s.name AS seriesName, "
+                + "(SELECT STRING_AGG(c.name, ', ') FROM BookCategory bc "
+                + "JOIN Category c ON bc.category_id = c.category_id WHERE bc.book_id = b.book_id) AS categories "
                 + "FROM Books b "
+                + "JOIN Author a ON b.author_id = a.author_id "
+                + "LEFT JOIN BookSeries s ON b.series_id = s.series_id "
                 + "JOIN BookCategory bc ON b.book_id = bc.book_id "
                 + "WHERE bc.category_id = ?";
-
-        try ( Connection conn = new DBConnect().connect();  PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, categoryId);
-            try ( ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    books.add(new Book(
-                            rs.getInt("book_id"),
-                            rs.getString("title"),
-                            rs.getString("author"),
-                            rs.getString("description"),
-                            rs.getDouble("price"),
-                            rs.getString("cover_image"),
-                            rs.getString("file_path")));
-                }
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return books;
-    }
-
-    public List<Book> getTop8Books() throws ClassNotFoundException {
-        List<Book> books = new ArrayList<>();
-        String sql = "SELECT TOP 8 * FROM books ORDER BY NEWID();"; // Chọn ngẫu nhiên 8 quyển sách
-        try ( Connection conn = DBConnect.connect();  PreparedStatement stmt = conn.prepareStatement(sql);  ResultSet rs = stmt.executeQuery()) {
+        try {
+            conn = new DBConnect().connect();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, categoryId);
+            rs = ps.executeQuery();
             while (rs.next()) {
-                books.add(new Book(rs.getInt("book_id"),
-                        rs.getString("title"),
-                        rs.getString("author"),
-                        rs.getString("description"),
-                        rs.getDouble("price"),
-                        rs.getString("cover_image"),
-                        rs.getString("file_path")));
+                Book book = new Book(
+                        rs.getInt("book_id"), rs.getString("title"), rs.getInt("author_id"), rs.getString("description"),
+                        rs.getDouble("price"), rs.getString("cover_image"), rs.getString("file_path"), rs.getString("publisher"),
+                        rs.getInt("publication_year"), rs.getInt("stock_quantity"), rs.getString("language"),
+                        rs.getInt("series_id"), rs.getInt("volume_number"), rs.getString("book_type"), rs.getInt("created_by")
+                );
+                book.setAuthorName(rs.getString("authorName"));
+                book.setSeriesName(rs.getString("seriesName"));
+                book.setCategories(rs.getString("categories"));
+                books.add(book);
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeResources();
         }
         return books;
     }
 
+    // Lấy 5 sách ngẫu nhiên (chỉ lấy ảnh bìa và mô tả)
+    public List<Map<String, String>> getRandomBooks() {
+        List<Map<String, String>> books = new ArrayList<>();
+        String query = "SELECT TOP 5 cover_image, description FROM Books ORDER BY NEWID()";
+        try {
+            conn = new DBConnect().connect();
+            ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Map<String, String> book = new HashMap<>();
+                book.put("cover_image", Optional.ofNullable(rs.getString("cover_image")).orElse("./images/default-cover-book-1.jpg"));
+                book.put("description", Optional.ofNullable(rs.getString("description")).orElse("No description available."));
+                books.add(book);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeResources();
+        }
+        return books;
+    }
+
+    // Lấy danh sách sách sắp xếp theo ID, kèm tên tác giả và danh mục
+    public List<Book> getSort() {
+        List<Book> list = new ArrayList<>();
+        String query = "SELECT b.*, a.name AS authorName, "
+                + "(SELECT STRING_AGG(c.name, ', ') FROM BookCategory bc "
+                + " JOIN Category c ON bc.category_id = c.category_id WHERE bc.book_id = b.book_id) AS categories "
+                + "FROM Books b JOIN Author a ON b.author_id = a.author_id ORDER BY b.book_id ASC";
+        try {
+            conn = new DBConnect().connect();
+            ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Book book = extractBookFromResultSet(rs);
+                list.add(book);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeResources();
+        }
+        return list;
+    }
+
+    // Lấy 4 sách ngẫu nhiên, kèm tên tác giả và danh mục
+    public List<Book> getTop4() {
+        List<Book> list = new ArrayList<>();
+        String query = "SELECT TOP 4 b.*, a.name AS authorName, "
+                + "(SELECT STRING_AGG(c.name, ', ') FROM BookCategory bc "
+                + " JOIN Category c ON bc.category_id = c.category_id WHERE bc.book_id = b.book_id) AS categories "
+                + "FROM Books b JOIN Author a ON b.author_id = a.author_id ORDER BY NEWID()";
+        try {
+            conn = new DBConnect().connect();
+            ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Book book = extractBookFromResultSet(rs);
+                list.add(book);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeResources();
+        }
+        return list;
+    }
+
+    // Lấy top 8 sách theo danh mục, kèm tên tác giả và danh mục
+    public List<Book> getTopBooksByCategory(int categoryId) {
+        List<Book> books = new ArrayList<>();
+        String query = "SELECT TOP 8 b.*, a.name AS authorName, "
+                + "(SELECT STRING_AGG(c.name, ', ') FROM BookCategory bc "
+                + " JOIN Category c ON bc.category_id = c.category_id WHERE bc.book_id = b.book_id) AS categories "
+                + "FROM Books b JOIN Author a ON b.author_id = a.author_id "
+                + "JOIN BookCategory bc ON b.book_id = bc.book_id WHERE bc.category_id = ?";
+        try {
+            conn = new DBConnect().connect();
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, categoryId);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Book book = extractBookFromResultSet(rs);
+                books.add(book);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeResources();
+        }
+        return books;
+    }
+
+    // Lấy 8 sách ngẫu nhiên, kèm tên tác giả và danh mục
+    public List<Book> getTop8Books() {
+        List<Book> books = new ArrayList<>();
+        String query = "SELECT TOP 8 b.*, a.name AS authorName, "
+                + "(SELECT STRING_AGG(c.name, ', ') FROM BookCategory bc "
+                + " JOIN Category c ON bc.category_id = c.category_id WHERE bc.book_id = b.book_id) AS categories "
+                + "FROM Books b JOIN Author a ON b.author_id = a.author_id ORDER BY NEWID()";
+        try {
+            conn = new DBConnect().connect();
+            ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Book book = extractBookFromResultSet(rs);
+                books.add(book);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeResources();
+        }
+        return books;
+    }
+
+    // Phương thức để trích xuất dữ liệu từ ResultSet và tạo đối tượng Book
+    private Book extractBookFromResultSet(ResultSet rs) throws SQLException {
+        Book book = new Book(
+                rs.getInt("book_id"),
+                rs.getString("title"),
+                rs.getInt("author_id"),
+                rs.getString("description"),
+                rs.getDouble("price"),
+                rs.getString("cover_image"),
+                rs.getString("file_path"),
+                rs.getString("publisher"),
+                rs.getInt("publication_year"),
+                rs.getInt("stock_quantity"),
+                rs.getString("language"),
+                rs.getInt("series_id"),
+                rs.getInt("volume_number"),
+                rs.getString("book_type"),
+                rs.getInt("created_by")
+        );
+        book.setAuthorName(rs.getString("authorName"));
+        book.setCategories(rs.getString("categories"));
+        return book;
+    }
+
+    // Đóng tài nguyên
+    private void closeResources() {
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+            if (ps != null) {
+                ps.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

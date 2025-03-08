@@ -20,7 +20,7 @@ import java.util.List;
 public class BookDetailController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, ClassNotFoundException {
         response.setContentType("text/html;charset=UTF-8");
         String bookId = request.getParameter("id");
         int book_id = Integer.parseInt(bookId); // Ép kiểu String sang int

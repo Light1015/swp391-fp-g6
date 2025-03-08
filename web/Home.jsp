@@ -8,7 +8,6 @@
 <jsp:useBean id="bookDAO" class="dao.BookDAO" scope="request"/>
 
 <% List<Category> categories = (List<Category>) request.getAttribute("topCategories"); 
-   Map<Integer, List<Book>> booksByCategory = (Map<Integer, List<Book>>) request.getAttribute("booksByCategory");
 %>
 
 <!DOCTYPE html>
@@ -81,15 +80,14 @@
         </section>
 
         <!-- Some quality items Featured Books -->
+        <!-- Some quality items Featured Books -->
+        <!-- Featured Books -->
         <section id="featured-books" class="py-5 my-5">
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
-
                         <div class="section-header align-center">
-                            <div class="title">
-                                <span>Some quality items</span>
-                            </div>
+                            <div class="title"><span>Some quality items</span></div>
                             <h2 class="section-title">Featured Books</h2>
                         </div>
 
@@ -97,76 +95,71 @@
                             <div class="row d-flex flex-wrap align-items-stretch">
                                 <% 
                                     List<Book> list4B = (List<Book>) request.getAttribute("list4B");
-                                    if (list4B != null) {
+                                    if (list4B != null && !list4B.isEmpty()) {
                                         for (Book book : list4B) {
                                 %>
                                 <div class="col-md-3">
                                     <div class="product-item">
                                         <figure class="product-style">
-                                            <img src="<%= book.getCover_image() %>" alt="<%= book.getTitle() %>" class="product-item">
-                                            <button type="button" class="add-to-cart" data-product-tile="add-to-cart">
-                                                Add to Cart
-                                            </button>
+                                            <img src="<%= book.getCoverImage() %>" alt="<%= book.getTitle() %>" class="product-item">
+                                            <button type="button" class="add-to-cart">Add to Cart</button>
                                         </figure>
                                         <figcaption>
-                                            <!-- Thêm link chuyển hướng đến trang BookDetail -->
-                                            <h3>
-                                                <a href="detail?book_id=<%= book.getBook_id() %>">
-                                                    <%= book.getTitle() %>
-                                                </a>
-                                            </h3>
-                                            <span><%= book.getAuthor() %></span>
+                                            <h3><a href="BookDetail.jsp?book_id=<%= book.getBookId() %>"><%= book.getTitle() %></a></h3>
+                                            <span><%= book.getAuthorName() %></span>
                                             <div class="item-price">$ <%= book.getPrice() %></div>
                                         </figcaption>
                                     </div>
                                 </div>
                                 <% 
                                         }
-                                    }
+                                    } else { 
                                 %>
+                                <p class="text-center">No featured books available.</p>
+                                <% } %>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- Nút View All Products -->
+
                 <div class="row">
                     <div class="col-md-12">
                         <div class="btn-wrap align-right">
-                            <a href="AllBooks.jsp" class="btn-accent-arrow">
-                                View all products 
-                                <i class="icon icon-ns-arrow-right"></i>
-                            </a>
+                            <a href="AllBooks.jsp" class="btn-accent-arrow">View all products <i class="icon icon-ns-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- Popular Books -->
         <section id="popular-books" class="bookshelf py-5 my-5">
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="section-header align-center">
-                            <div class="title">
-                                <span>Some quality items</span>
-                            </div>
+                            <div class="title"><span>Some quality items</span></div>
                             <h2 class="section-title">Popular Books</h2>
                         </div>
 
                         <ul class="tabs">
                             <li data-tab-target="#all-genre" class="active tab">All Genre</li>
-                                <% if (categories != null && !categories.isEmpty()) { %>
-                                <% for (Category category : categories) { %>
+                                <% 
+                                    List<Category> topCategories = (List<Category>) request.getAttribute("topCategories");
+                                    if (topCategories != null) {
+                                        for (Category category : topCategories) { 
+                                %>
                             <li data-tab-target="#<%= category.getCategoryName().toLowerCase().replaceAll("\\s+", "-") %>" class="tab">
                                 <%= category.getCategoryName() %>
                             </li>
-                            <% } %>
-                            <% } else { %>
-                            <li>Không có dữ liệu</li>
-                                <% } %>
+                            <% 
+                                    }
+                                } 
+                            %>
                         </ul>
 
                         <div class="tab-content">
+                            <!-- All Genres -->
                             <div id="all-genre" data-tab-content class="active">
                                 <div class="row">
                                     <% 
@@ -177,73 +170,69 @@
                                     <div class="col-md-3">
                                         <div class="product-item">
                                             <figure class="product-style">
-                                                <img src="<%= book.getCover_image() %>" alt="Book Cover" class="product-item">
-                                                <button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to Cart</button>
+                                                <img src="<%= book.getCoverImage() %>" alt="Book Cover" class="product-item">
+                                                <button type="button" class="add-to-cart">Add to Cart</button>
                                             </figure>
                                             <figcaption>
-                                                <h3>
-                                                    <a href="BookDetail.jsp?book_id=<%= book.getBook_id() %>">
-                                                        <%= book.getTitle() %>
-                                                    </a>
-                                                </h3>
-
-                                                <span><%= book.getAuthor() %></span>
+                                                <h3><a href="BookDetail.jsp?book_id=<%= book.getBookId() %>"><%= book.getTitle() %></a></h3>
+                                                <span><%= book.getAuthorName() %></span>
                                                 <div class="item-price">$ <%= book.getPrice() %></div>
                                             </figcaption>
                                         </div>
                                     </div>
                                     <% 
-                                            } // Kết thúc vòng lặp sách
+                                            }
                                         } else { 
                                     %>
-                                    <p class="text-center">Không có sách nào trong danh mục này.</p>
+                                    <p class="text-center">No books available.</p>
                                     <% } %>
                                 </div>
                             </div>
 
-                            <% List<Category> topCategories = (List<Category>) request.getAttribute("topCategories"); %>
-                            <% if (topCategories != null && !topCategories.isEmpty()) { %>
-                            <% for (Category category : topCategories) { %>
+                            <!-- Books by Category -->
+                            <% 
+                                Map<Integer, List<Book>> booksByCategory = (Map<Integer, List<Book>>) request.getAttribute("booksByCategory");
+                                if (topCategories != null) {
+                                    for (Category category : topCategories) {
+                                        List<Book> books = booksByCategory.get(category.getCategoryId());
+                            %>
                             <div id="<%= category.getCategoryName().toLowerCase().replaceAll("\\s+", "-") %>" data-tab-content>
                                 <div class="row">
                                     <% 
-                                       List<Book> books = booksByCategory.get(category.getCategoryId());
                                         if (books != null && !books.isEmpty()) { 
                                             for (Book book : books) { 
                                     %>
                                     <div class="col-md-3">
                                         <div class="product-item">
                                             <figure class="product-style">
-                                                <img src="<%= book.getCover_image() %>" alt="Book Cover" class="product-item">
-                                                <button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to Cart</button>
+                                                <img src="<%= book.getCoverImage() %>" alt="Book Cover" class="product-item">
+                                                <button type="button" class="add-to-cart">Add to Cart</button>
                                             </figure>
                                             <figcaption>
-                                                <h3>
-                                                    <a href="BookDetail.jsp?book_id=<%= book.getBook_id() %>">
-                                                        <%= book.getTitle() %>
-                                                    </a>
-                                                </h3>
-
-                                                <span><%= book.getAuthor() %></span>
+                                                <h3><a href="BookDetail.jsp?book_id=<%= book.getBookId() %>"><%= book.getTitle() %></a></h3>
+                                                <span><%= book.getAuthorName() %></span>
                                                 <div class="item-price">$ <%= book.getPrice() %></div>
                                             </figcaption>
                                         </div>
                                     </div>
-                                    <% } 
-                    } else { %>
-                                    <p class="text-center">Không có sách trong danh mục này.</p>
+                                    <% 
+                                            }
+                                        } else { 
+                                    %>
+                                    <p class="text-center">No books in this category.</p>
                                     <% } %>
                                 </div>
                             </div>
-                            <% } %>
-                            <% } %>
+                            <% 
+                                    }
+                                } 
+                            %>
                         </div>
-
-
                     </div>
                 </div>
             </div>
         </section>
+
 
 
         <footer>
@@ -258,5 +247,4 @@
         <script src="js/script.js"></script>
 
     </body>
-
 </html>
