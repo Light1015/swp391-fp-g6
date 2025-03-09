@@ -9,7 +9,7 @@ package entity;
 
 public class Book {
 
-    private int bookId;
+    private int book_id;
     private String title;
     private int authorId;
     private String description;
@@ -31,11 +31,11 @@ public class Book {
     private String categories;  // Danh mục sách (dạng chuỗi cách nhau bằng dấu phẩy)
 
     // Constructor đầy đủ
-    public Book(int bookId, String title, int authorId, String description, double price,
+    public Book(int book_id, String title, int authorId, String description, double price,
             String coverImage, String filePath, String publisher, int publicationYear,
             int stockQuantity, String language, int seriesId, int volumeNumber,
             String bookType, int createdBy) {
-        this.bookId = bookId;
+        this.book_id = book_id;
         this.title = title;
         this.authorId = authorId;
         this.description = description;
@@ -78,12 +78,12 @@ public class Book {
     }
 
     // Getter & Setter cho các thuộc tính cũ
-    public int getBookId() {
-        return bookId;
+    public int getBook_id() {
+        return book_id;
     }
 
-    public void setBookId(int bookId) {
-        this.bookId = bookId;
+    public void setBook_id(int bookId) {
+        this.book_id = bookId;
     }
 
     public String getTitle() {

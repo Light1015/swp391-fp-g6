@@ -104,7 +104,7 @@
                                             <button type="button" class="add-to-cart">Add to Cart</button>
                                         </figure>
                                         <figcaption>
-                                            <h3><a href="BookDetail.jsp?book_id=<%= book.getBookId() %>"><%= book.getTitle() %></a></h3>
+                                            <h3><a href="BookDetail.jsp?book_id=<%= book.getBook_id() %>"><%= book.getTitle() %></a></h3>
                                             <span><%= book.getAuthorName() %></span>
                                             <div class="item-price">$ <%= book.getPrice() %></div>
                                         </figcaption>
@@ -173,7 +173,7 @@
                                                 <button type="button" class="add-to-cart">Add to Cart</button>
                                             </figure>
                                             <figcaption>
-                                                <h3><a href="BookDetail.jsp?book_id=<%= book.getBookId() %>"><%= book.getTitle() %></a></h3>
+                                                <h3><a href="BookDetail.jsp?book_id=<%= book.getBook_id() %>"><%= book.getTitle() %></a></h3>
                                                 <span><%= book.getAuthorName() %></span>
                                                 <div class="item-price">$ <%= book.getPrice() %></div>
                                             </figcaption>
@@ -208,7 +208,7 @@
                                                 <button type="button" class="add-to-cart">Add to Cart</button>
                                             </figure>
                                             <figcaption>
-                                                <h3><a href="BookDetail.jsp?book_id=<%= book.getBookId() %>"><%= book.getTitle() %></a></h3>
+                                                <h3><a href="BookDetail.jsp?book_id=<%= book.getBook_id() %>"><%= book.getTitle() %></a></h3>
                                                 <span><%= book.getAuthorName() %></span>
                                                 <div class="item-price">$ <%= book.getPrice() %></div>
                                             </figcaption>

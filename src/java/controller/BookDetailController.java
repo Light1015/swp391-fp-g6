@@ -25,10 +25,22 @@ public class BookDetailController extends HttpServlet {
         String bookId = request.getParameter("id");
         int book_id = Integer.parseInt(bookId); // Ép kiểu String sang int
         BookDAO bookDao = new BookDAO();
-        Book book = (Book) bookDao.getBookById(book_id);
+
+        // Lấy chi tiết sách
+        Book book = bookDao.getBookById(book_id);
+
+        // Lấy 4 sách giới thiệu ngẫu nhiên
+        List<Book> topBooks = bookDao.getTop4();
+
+        // Lấy danh mục sách
         List<Category> listC = bookDao.getAllCategory();
+
+        // Gửi dữ liệu qua JSP
         request.setAttribute("detail", book);
+        request.setAttribute("topBooks", topBooks);
         request.setAttribute("listCC", listC);
+
+        // Forward đến trang JSP
         request.getRequestDispatcher("BookDetail.jsp").forward(request, response);
     }
 

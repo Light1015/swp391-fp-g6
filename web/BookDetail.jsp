@@ -3,6 +3,7 @@
     Created on : Mar 4, 2025, 10:01:39 AM
     Author     : SE18-CE180628-Nguyen Pham Doan Trang
 --%>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="entity.Book, dao.BookDAO, java.util.List" %>
 
@@ -45,7 +46,7 @@
       if (book != null) {
           try {
               // Lấy danh sách thể loại từ BookDAO
-              String categories = new BookDAO().getCategoriesForBook(book.getBookId());
+              String categories = new BookDAO().getCategoriesForBook(book.getBook_id());
               // Tách danh sách thể loại thành mảng
               categoryNames = categories.split(", ");
           } catch (ClassNotFoundException e) {
@@ -70,11 +71,11 @@
                     <img src="<%= book.getCoverImage() %>" alt="<%= book.getTitle() %>" class="img-fluid rounded shadow-lg">
 
                     <div class="mt-2 d-flex gap-3">
-                        <a href="CartServlet?book_id=<%= book.getBookId() %>&action=add" 
+                        <a href="CartServlet?book_id=<%= book.getBook_id() %>&action=add" 
                            class="btn btn-light btn-lg w-50 d-flex align-items-center justify-content-center border rounded-3 shadow-sm">
                             <i class="fas fa-shopping-cart me-2"></i> Thêm vào giỏ hàng
                         </a>
-                        <a href="CheckoutServlet?book_id=<%= book.getBookId() %>" 
+                        <a href="CheckoutServlet?book_id=<%= book.getBook_id() %>" 
                            class="btn btn-light btn-lg w-50 d-flex align-items-center justify-content-center border rounded-3 shadow-sm">
                             <i class="fas fa-credit-card me-2"></i> Mua ngay
                         </a>
@@ -84,12 +85,31 @@
                 <!-- Cột bên phải: Chứa tất cả thông tin còn lại -->
                 <div class="col-md-8">
                     <div class="card p-4">
-                        <h2 class="display-4"><%= book.getTitle() %></h2>
-                        <p><strong>Nhà xuất bản:</strong> <%= book.getPublisher() %></p>
-                        <p><strong>Tác giả:</strong> <%= book.getAuthorName() %></p>
-                        <p><strong>Hình thức sách:</strong> <%= book.getBookType() %></p>
-                        <p class="lead text-success"><strong>Giá:</strong> $<%= book.getPrice() %></p>
+                        <h4 class="display-4 mb-4"><%= book.getTitle() %></h4>
 
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <p><strong>Nhà xuất bản:</strong> <%= book.getPublisher() %></p>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <p><strong>Tác giả:</strong> <%= book.getAuthorName() %></p>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <p><strong>Hình thức sách:</strong> <%= book.getBookType() %></p>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <p class="lead text-success"><strong>Giá:</strong> $<%= book.getPrice() %></p>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <p><strong>Trạng thái:</strong> 
+                                    <% if (book.getStockQuantity() > 0) { %>
+                                    <span class="text-success">Còn hàng</span>
+                                    <% } else { %>
+                                    <span class="text-danger">Hết hàng</span>
+                                    <% } %>
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Xem thêm sản phẩm tương tự -->
@@ -104,7 +124,7 @@
                                          style="height: 180px; width: 100%; object-fit: contain;">
                                     <div class="card-body p-2">
                                         <h6 class="card-title text-truncate">
-                                            <a href="BookDetail.jsp?book_id=<%= sBook.getBookId() %>" class="text-dark text-decoration-none">
+                                            <a href="BookDetail.jsp?book_id=<%= sBook.getBook_id() %>" class="text-dark text-decoration-none">
                                                 <%= sBook.getTitle() %>
                                             </a>
                                         </h6>
@@ -120,11 +140,10 @@
                     </div>
 
 
-                    <!-- Mô tả chi tiết sách -->
+                    <!-- Thông tin chi tiết khác -->
                     <div class="mt-5">
                         <h3>Thông tin chi tiết</h3>
                         <ul class="list-group">
-                            <li class="list-group-item"><strong>Mô tả:</strong> <%= book.getDescription() %></li>
                             <li class="list-group-item"><strong>Ngôn ngữ:</strong> <%= book.getLanguage() %></li>
                             <li class="list-group-item"><strong>Năm xuất bản:</strong> <%= book.getPublicationYear() %></li>
                             <li class="list-group-item"><strong>Kho hàng:</strong> <%= book.getStockQuantity() %> sản phẩm</li>
@@ -133,11 +152,19 @@
                                 <% } %>
                         </ul>
                     </div>
+
+                    <!-- Mô tả chi tiết sách (hiển thị dưới đây) -->
+                    <div class="mt-5">
+                        <h3>Mô tả sản phẩm</h3>
+                        <p><%= book.getDescription() %></p> <!-- Hiển thị mô tả sản phẩm tại đây -->
+                    </div>
+
                 </div>
             </div>
             <% } else { %>
             <div class="alert alert-danger">Không tìm thấy sách.</div>
             <% } %>
+
         </div>
 
         <footer>
