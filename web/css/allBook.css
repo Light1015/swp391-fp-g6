@@ -1,0 +1,37 @@
+/* 
+    Created on : Mar 13, 2025, 6:49:14 PM
+    Author     : SE18-CE180628-Nguyen Pham Doan Trang
+*/
+
+.product-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    text-align: center;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+}
+.product-item img {
+    max-height: 250px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+.product-item h3 {
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
+.product-item .item-price {
+    font-weight: bold;
+    color: #28a745;
+}
+.book-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: normal;
+    gap: 20px;
+}

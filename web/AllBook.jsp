@@ -25,9 +25,11 @@
     <head>
         <title>All Books</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <link rel="stylesheet" type="text/css" href="css/allBook.css">
+       
     </head>
     <body>
-
         <jsp:include page="Menu.jsp"></jsp:include>
             <div class="container mt-4">
                 <div class="row">
@@ -45,16 +47,19 @@
 
                 <!-- Book Grid -->
                 <div class="col-md-9">
-                    <div class="row">
+                    <div class="row book-grid">
                         <% for (Book book : books) { %>
-                        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                            <div class="card h-100">
-                                <img src="<%= book.getCoverImage() %>" class="card-img-top" alt="Book Cover">
-                                <div class="card-body">
-                                    <h5 class="card-title"><%= book.getTitle() %></h5>
-                                    <p class="card-text">$<%= book.getPrice() %></p>
-                                    <a href="BookDetail.jsp?book_id=<%= book.getBook_id() %>" class="btn btn-primary">Chi tiết</a>
-                                </div>
+                        <div class="col-lg-3 col-md-4 col-sm-6 d-flex align-items-stretch">
+                            <div class="product-item w-100">
+                                <figure class="product-style">
+                                    <img src="<%= book.getCoverImage() %>" alt="<%= book.getTitle() %>" class="w-100">
+                                    <button type="button" class="add-to-cart">Add to Cart</button>
+                                </figure>
+                                <figcaption>
+                                    <h3><a href="BookDetail.jsp?book_id=<%= book.getBook_id() %>"><%= book.getTitle() %></a></h3>
+                                    <span><%= book.getAuthorName() %></span>
+                                    <div class="item-price">$ <%= book.getPrice() %></div>
+                                </figcaption>
                             </div>
                         </div>
                         <% } %>
@@ -62,7 +67,7 @@
 
                     <!-- Pagination -->
                     <nav>
-                        <ul class="pagination justify-content-center">
+                        <ul class="pagination justify-content-center py-5">
                             <% for (int i = 1; i <= totalPages; i++) { %>
                             <li class="page-item <%= (i == currentPage) ? "active" : "" %>">
                                 <a class="page-link" href="AllBook.jsp?page=<%= i %>&category=<%= selectedCategory != null ? selectedCategory : "" %>"><%= i %></a>
@@ -77,7 +82,7 @@
         <footer>
             <jsp:include page="Footer.jsp"></jsp:include>
         </footer>
-        
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
