@@ -1,0 +1,166 @@
+/* 
+    Created on : Mar 13, 2025, 6:59:52 PM
+    Author     : SE18-CE180628-Nguyen Pham Doan Trang
+*/
+
+:root {
+    --primary-color: #4856ee;
+    --secondary-color: #626ffd;
+    --background-color: #121212;
+    --card-background: #1e1e1e;
+    --text-color: #ffffff;
+    --highlight-color: #f1c40f;
+}
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+.card {
+    background-color: var(--card-background);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+.sidebar {
+    background: #2c2f33 !important;
+    padding: 20px !important;
+    border-radius: 10px !important;
+}
+.sidebar a {
+    display: block;
+    color: var(--text-color);
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    transition: background 0.3s;
+    text-decoration: none;
+    cursor: pointer;
+}
+.sidebar a:hover, .sidebar a.active {
+    background: var(--highlight-color);
+    color: #2c2f33;
+}
+.sidebar-container {
+    position: relative;
+    top: 2px; /* Điều chỉnh giá trị này để nâng sidebar lên */
+}
+.avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid var(--highlight-color);
+    transition: transform 0.3s;
+    margin-bottom: 15px;
+}
+.avatar:hover {
+    transform: scale(1.1);
+}
+.avatar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.display-name {
+    font-weight: bold;
+    color: var(--highlight-color);
+    font-size: 1.2rem;
+    text-align: center;
+}
+.info-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    border-bottom: 1px solid #444 !important;
+}
+.info-row span {
+    flex-grow: 1 !important;
+}
+.info-row form {
+    margin: 0 !important;
+}
+.btn-warning, .btn-success, .btn-danger {
+    background: #f1c40f !important;
+    color: #23272A !important;
+    border-radius: 15px !important; /* Bo góc mềm mại */
+    padding: 4px 10px !important; /* Giảm kích thước */
+    font-size: 12px !important; /* Cỡ chữ nhỏ hơn */
+    font-weight: bold !important; /* Chữ đậm hơn */
+    transition: all 0.3s ease-in-out !important;
+    border: none !important;
+    min-width: 80px; /* Đảm bảo không quá nhỏ */
+    text-align: center;
+}
+
+.btn-warning:hover {
+    background: #d4ac0d !important;
+    transform: scale(1.05) !important;
+}
+
+.btn-success {
+    background: #27ae60 !important;
+    color: white !important; /* Màu chữ trắng cho dễ nhìn */
+}
+
+.btn-success:hover {
+    background: #219150 !important;
+}
+
+.btn-danger {
+    background: #e74c3c !important;
+    color: white !important; /* Màu chữ trắng */
+}
+
+.btn-danger:hover {
+    background: #c0392b !important;
+}
+.navbar-logo {
+    position: relative;
+    bottom: 6px;
+}
+/* Notification Popup Styling */
+.notification-popup {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    min-width: 300px;
+    max-width: 80%;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+.notification-popup.success {
+    background-color: #27ae60;
+    color: white;
+    border-left: 5px solid #219150;
+}
+.notification-popup.error {
+    background-color: #e74c3c;
+    color: white;
+    border-left: 5px solid #c0392b;
+}
+.notification-popup.show {
+    opacity: 1;
+    visibility: visible;
+}
+.notification-popup.hide {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Footer container to ensure footer isn't affected by page styles */
+.footer-container {
+    margin-top: 30px;
+    /* Reset any styles that might affect the footer */
+    all: initial;
+    /* Keep display block to maintain layout */
+    display: block;
+}

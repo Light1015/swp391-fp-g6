@@ -43,170 +43,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Thông tin cá nhân</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="css/UserProfile.css">
-        <style>
-            :root {
-                --primary-color: #4856ee;
-                --secondary-color: #626ffd;
-                --background-color: #121212;
-                --card-background: #1e1e1e;
-                --text-color: #ffffff;
-                --highlight-color: #f1c40f;
-            }
-            body {
-                background-color: var(--background-color);
-                color: var(--text-color);
-            }
-            .card {
-                background-color: var(--card-background);
-                border-radius: 12px;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            }
-            .sidebar {
-                background: #2c2f33 !important;
-                padding: 20px !important;
-                border-radius: 10px !important;
-            }
-            .sidebar a {
-                display: block;
-                color: var(--text-color);
-                padding: 12px;
-                margin-bottom: 10px;
-                border-radius: 8px;
-                transition: background 0.3s;
-                text-decoration: none;
-                cursor: pointer;
-            }
-            .sidebar a:hover, .sidebar a.active {
-                background: var(--highlight-color);
-                color: #2c2f33;
-            }
-            .sidebar-container {
-                position: relative;
-                top: 2px; /* Điều chỉnh giá trị này để nâng sidebar lên */
-            }
-            .avatar {
-                width: 150px;
-                height: 150px;
-                border-radius: 50%;
-                object-fit: cover;
-                border: 5px solid var(--highlight-color);
-                transition: transform 0.3s;
-                margin-bottom: 15px;
-            }
-            .avatar:hover {
-                transform: scale(1.1);
-            }
-            .avatar-container {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                margin-bottom: 20px;
-            }
-            .display-name {
-                font-weight: bold;
-                color: var(--highlight-color);
-                font-size: 1.2rem;
-                text-align: center;
-            }
-            .info-row {
-                display: flex !important;
-                align-items: center !important;
-                justify-content: space-between !important;
-                padding: 8px 12px !important;
-                font-size: 14px !important;
-                border-bottom: 1px solid #444 !important;
-            }
-            .info-row span {
-                flex-grow: 1 !important;
-            }
-            .info-row form {
-                margin: 0 !important;
-            }
-            .btn-warning, .btn-success, .btn-danger {
-                background: #f1c40f !important;
-                color: #23272A !important;
-                border-radius: 15px !important; /* Bo góc mềm mại */
-                padding: 4px 10px !important; /* Giảm kích thước */
-                font-size: 12px !important; /* Cỡ chữ nhỏ hơn */
-                font-weight: bold !important; /* Chữ đậm hơn */
-                transition: all 0.3s ease-in-out !important;
-                border: none !important;
-                min-width: 80px; /* Đảm bảo không quá nhỏ */
-                text-align: center;
-            }
-
-            .btn-warning:hover {
-                background: #d4ac0d !important;
-                transform: scale(1.05) !important;
-            }
-
-            .btn-success {
-                background: #27ae60 !important;
-                color: white !important; /* Màu chữ trắng cho dễ nhìn */
-            }
-
-            .btn-success:hover {
-                background: #219150 !important;
-            }
-
-            .btn-danger {
-                background: #e74c3c !important;
-                color: white !important; /* Màu chữ trắng */
-            }
-
-            .btn-danger:hover {
-                background: #c0392b !important;
-            }
-            .navbar-logo {
-                position: relative;
-                bottom: 6px;
-            }
-            /* Notification Popup Styling */
-            .notification-popup {
-                position: fixed;
-                top: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                z-index: 9999;
-                min-width: 300px;
-                max-width: 80%;
-                padding: 15px 20px;
-                border-radius: 8px;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-                text-align: center;
-                opacity: 0;
-                visibility: hidden;
-                transition: opacity 0.3s, visibility 0.3s;
-            }
-            .notification-popup.success {
-                background-color: #27ae60;
-                color: white;
-                border-left: 5px solid #219150;
-            }
-            .notification-popup.error {
-                background-color: #e74c3c;
-                color: white;
-                border-left: 5px solid #c0392b;
-            }
-            .notification-popup.show {
-                opacity: 1;
-                visibility: visible;
-            }
-            .notification-popup.hide {
-                opacity: 0;
-                visibility: hidden;
-            }
-
-            /* Footer container to ensure footer isn't affected by page styles */
-            .footer-container {
-                margin-top: 30px;
-                /* Reset any styles that might affect the footer */
-                all: initial;
-                /* Keep display block to maintain layout */
-                display: block;
-            }
-        </style>
+        <link rel="stylesheet" type="text/css" href="css/userProfile.css">
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+       
     </head>
 
     <body>
@@ -281,7 +120,6 @@
                             <a id="sidebar-profile" class="<%= activeTab.equals("profile") ? "active" : "" %>" onclick="changeTab('profile')">Hồ sơ</a>
                             <a id="sidebar-status" class="<%= activeTab.equals("userStatus") ? "active" : "" %>" onclick="changeTab('userStatus')">Trạng thái tài khoản</a>
                             <h4 class="text-warning mt-4">Thanh toán</h4>
-                            <a id="sidebar-payment" class="<%= activeTab.equals("payment") ? "active" : "" %>" onclick="changeTab('payment')">Gói đăng ký</a>
                             <a id="sidebar-history" class="<%= activeTab.equals("paymentHistory") ? "active" : "" %>" onclick="changeTab('paymentHistory')">Lịch sử thanh toán</a>
                             <h4 class="text-warning">Cài đặt bảo mật</h4>
                             <a id="sidebar-security" class="<%= activeTab.equals("securitySettings") ? "active" : "" %>" onclick="changeTab('securitySettings')">Thông tin bảo mật</a>
@@ -357,27 +195,8 @@
                                     </div>
                                 </div>
 
-                                <!-- Tab 4: Thanh toán - Gói đăng ký -->
-                                <div class="tab-pane <%= activeTab.equals("payment") ? "show active" : "" %>" id="payment">
-                                    <div class="p-4 bg-light text-dark rounded shadow-lg">
-                                        <h4 class="fw-bold text-primary mb-3">Gói đăng ký</h4>
-                                        <div class="mb-3">
-                                            <p class="mb-1"><strong class="fw-bold">Gói hiện tại:</strong></p>
-                                            <p class="text-dark">VIP (Hết hạn: 31/12/2025)</p>
-                                        </div>
-                                        <div class="mb-3">
-                                            <p class="mb-1"><strong class="fw-bold">Các gói khác:</strong></p>
-                                            <ul>
-                                                <li>Gói Basic - 100.000đ/tháng</li>
-                                                <li>Gói Pro - 300.000đ/tháng</li>
-                                                <li>Gói VIP - 500.000đ/tháng</li>
-                                            </ul>
-                                        </div>
-                                        <button class="btn btn-primary mt-3 px-4 py-2 fw-bold">Nâng cấp gói</button>
-                                    </div>
-                                </div>
 
-                                <!-- Tab 5: Thanh toán - Lịch sử thanh toán -->
+                                <!-- Tab 4: Thanh toán - Lịch sử thanh toán -->
                                 <div class="tab-pane <%= activeTab.equals("paymentHistory") ? "show active" : "" %>" id="paymentHistory">
                                     <div class="p-4 bg-light text-dark rounded shadow-lg">
                                         <h4 class="fw-bold text-primary mb-3">Lịch sử thanh toán</h4>
@@ -408,7 +227,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Tab 6: Cài đặt bảo mật -->
+                                <!-- Tab 5: Cài đặt bảo mật -->
                                 <div class="tab-pane <%= activeTab.equals("securitySettings") ? "show active" : "" %>" id="securitySettings">
                                     <div class="p-4 bg-light text-dark rounded shadow-lg">
                                         <h4 class="fw-bold text-primary mb-3">Thông tin bảo mật</h4>
@@ -428,7 +247,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Tab 7: Đổi mật khẩu -->
+                                <!-- Tab 6: Đổi mật khẩu -->
                                 <div class="tab-pane <%= activeTab.equals("changePassword") ? "show active" : "" %>" id="changePassword">
                                     <div class="p-4 bg-light text-dark rounded shadow-lg">
                                         <h4 class="fw-bold text-primary mb-3">Đổi mật khẩu</h4>
@@ -461,9 +280,9 @@
         </div>
 
         <!-- Footer container with isolation -->
-        <div class="footer-container">
+       
             <jsp:include page="Footer.jsp"></jsp:include>
-        </div>
+       
 
         <script>
             // Function to show popup notification
