@@ -13,13 +13,13 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author SE18-CE180628-Nguyen Pham Doan Trang
  */
-@WebServlet(name="LoadMoreController", urlPatterns={"/load"})
-public class LoadMoreController extends HttpServlet {
+@WebServlet(name="SearchController", urlPatterns={"/search"})
+public class SearchController extends HttpServlet {
    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-      
+       
     } 
 
     @Override

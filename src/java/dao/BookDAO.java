@@ -25,16 +25,14 @@ import java.util.Optional;
  */
 public class BookDAO {
 
-    Connection conn = null;
     PreparedStatement ps = null;
     ResultSet rs = null;
+    private Connection conn;
 
-//
-//    private Connection conn;
-//
-//    public BookDAO(Connection conn) {
-//        this.conn = conn;
-//    }
+    public BookDAO() throws ClassNotFoundException, SQLException {
+        this.conn = new DBConnect().connect(); // Luôn khởi tạo kết nối khi tạo BookDAO
+    }
+
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
         BookDAO dao = new BookDAO();
         List<Book> list = dao.getAllBooks();
@@ -364,17 +362,98 @@ public class BookDAO {
         return categories;
     }
 
+    public List<Book> getBooksByCategoryAndFilter(String categoryId, String filter, int page, int booksPerPage) {
+        List<Book> books = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+                "SELECT b.*, a.name AS authorName, s.name AS seriesName, "
+                + "(SELECT STRING_AGG(c.name, ', ') FROM BookCategory bc "
+                + "JOIN Category c ON bc.category_id = c.category_id WHERE bc.book_id = b.book_id) AS categories "
+                + "FROM Books b "
+                + "JOIN Author a ON b.author_id = a.author_id "
+                + "LEFT JOIN BookSeries s ON b.series_id = s.series_id "
+        );
+
+        // Nếu có category, thêm điều kiện lọc
+        if (categoryId != null && !categoryId.isEmpty()) {
+            sql.append(" JOIN BookCategory bc ON b.book_id = bc.book_id WHERE bc.category_id = ? ");
+        } else {
+            sql.append(" WHERE 1=1 ");
+        }
+
+        // Nếu có bộ lọc, thêm điều kiện sắp xếp
+        if ("priceAsc".equals(filter)) {
+            sql.append(" ORDER BY b.price ASC ");
+        } else if ("priceDesc".equals(filter)) {
+            sql.append(" ORDER BY b.price DESC ");
+        } else if ("nameAsc".equals(filter)) {
+            sql.append(" ORDER BY b.title ASC ");
+        } else if ("nameDesc".equals(filter)) {
+            sql.append(" ORDER BY b.title DESC ");
+        } else {
+            sql.append(" ORDER BY b.book_id DESC "); // Mặc định sắp xếp theo ID
+        }
+
+        // Phân trang
+        sql.append(" OFFSET ? ROWS FETCH NEXT ? ROWS ONLY ");
+
+        try {
+            ps = conn.prepareStatement(sql.toString());
+            int paramIndex = 1;
+
+            if (categoryId != null && !categoryId.isEmpty()) {
+                ps.setInt(paramIndex++, Integer.parseInt(categoryId));
+            }
+
+            ps.setInt(paramIndex++, (page - 1) * booksPerPage);
+            ps.setInt(paramIndex++, booksPerPage);
+
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                books.add(extractBookFromResultSet(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources();
+        }
+        return books;
+    }
+
+    public int getTotalBooks(String categoryId, String filter) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) AS total FROM Books b ");
+
+        if (categoryId != null && !categoryId.isEmpty()) {
+            sql.append(" JOIN BookCategory bc ON b.book_id = bc.book_id WHERE bc.category_id = ? ");
+        } else {
+            sql.append(" WHERE 1=1 ");
+        }
+
+        try {
+            ps = conn.prepareStatement(sql.toString());
+            if (categoryId != null && !categoryId.isEmpty()) {
+                ps.setInt(1, Integer.parseInt(categoryId));
+            }
+
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources();
+        }
+        return 0;
+    }
+
     // Đóng tài nguyên
-    private void closeResources() {
+    public void closeResources() {
         try {
             if (rs != null) {
                 rs.close();
             }
             if (ps != null) {
                 ps.close();
-            }
-            if (conn != null) {
-                conn.close();
             }
         } catch (Exception e) {
             e.printStackTrace();

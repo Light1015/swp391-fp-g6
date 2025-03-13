@@ -44,4 +44,59 @@ public class CategoryDAO {
         return categories;
     }
 
+    public List<Category> getAllCategory() {
+        List<Category> list = new ArrayList<>();
+        String query = "SELECT * FROM Category";
+        try {
+            conn = new DBConnect().connect();
+            ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(new Category(rs.getInt("category_id"), rs.getString("name")));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeResources();
+        }
+        return list;
+    }
+
+    public List<Category> getAllCategories() throws ClassNotFoundException {
+        List<Category> categories = new ArrayList<>();
+        String query = "SELECT category_id, name FROM Category ORDER BY name ASC"; // Sắp xếp theo chữ cái A-Z
+
+        try {
+            conn = new DBConnect().connect();
+            ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int categoryId = rs.getInt("category_id");
+                String categoryName = rs.getString("name");
+                categories.add(new Category(categoryId, categoryName));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return categories;
+    }
+    // Đóng tài nguyên
+
+    public void closeResources() {
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+            if (ps != null) {
+                ps.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

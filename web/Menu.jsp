@@ -2,8 +2,16 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<%@page import="dao.CategoryDAO"%>
+<%@page import="entity.Category"%>
+<%@page import="java.util.List"%>
+
 <%
+    CategoryDAO categoryDAO = new CategoryDAO();
+    List<Category> categories = categoryDAO.getAllCategories();
+    request.setAttribute("categories", categories);
     Account acc = (Account) session.getAttribute("account");
+    request.setAttribute("totalCategories", categories.size()); // Tính tổng số danh mục ngay trong Java
 %>
 
 
@@ -23,10 +31,13 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
               integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
 
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
         <link rel="stylesheet" type="text/css" href="css/normalize.css">
         <link rel="stylesheet" type="text/css" href="icomoon/icomoon.css">
         <link rel="stylesheet" type="text/css" href="css/vendor.css">
         <link rel="stylesheet" type="text/css" href="css/style.css">
+        <link rel="stylesheet" type="text/css" href="css/menu.css">
     </head>
     <body>
         <div id="header-wrap">
@@ -45,82 +56,103 @@
                             </div><!--social-links-->
                         </div>
                         <div class="col-md-6">
-                            <div class="right-element d-flex align-items-center justify-content-end">
+                            <div class="right-element d-flex align-items-center justify-content-end gap-2">
                                 <c:if test="${empty sessionScope.account}">
-                                    <a href="Login.jsp" class="user-account for-buy">
-                                        <i class="icon icon-user"></i><span>Login</span>
+                                    <a href="Login.jsp" class="user-account for-buy d-flex align-items-center">
+                                        <i class="fa-solid fa-user"></i><span class="ms-1">Login</span>
                                     </a>
                                 </c:if>
 
                                 <c:if test="${not empty sessionScope.account}">
-                                    <a class="nav-link" href="UserProfile.jsp">Hello, ${sessionScope.account.username}</a>
-                                    <a class="nav-link" href="logout">Logout</a>
-                                </c:if>  
+                                    <a class="nav-link" href="UserProfile.jsp"><i class="fa-solid fa-user"></i></a>
+                                    </c:if>  
 
-                                <a href="#" class="cart for-buy"><i class="icon icon-clipboard"></i></a>
+                                <a href="#" class="cart for-buy"><i class="fa-solid fa-clipboard"></i></a>
 
                                 <div class="action-menu d-flex align-items-center">
                                     <div class="search-bar">
                                         <a href="#" class="search-button search-toggle" data-selector="#header-wrap">
-                                            <i class="icon icon-search"></i>
+                                            <i class="fa-solid fa-magnifying-glass"></i>
                                         </a>
                                         <form role="search" method="get" class="search-box">
-                                            <input class="search-field text search-input" placeholder="Search"
-                                                   type="search">
+                                            <input class="search-field text search-input" placeholder="Search" type="search">
                                         </form>
                                     </div>
                                 </div>
                             </div><!--top-right-->
                         </div>
+
                     </div>
                 </div>
             </div><!--top-content-->
 
             <header id="header">
                 <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-2">
+                    <div class="row align-items-center">
+                        <!-- Logo -->
+                        <div class="col-auto">
                             <div class="main-logo">
-                                <a href="Home.jsp"><img src="images/main-logo2.png" alt="logo"></a>
+                                <a href="index.jsp" class="navbar-brand ms-4 ms-lg-0">
+                                    <h1 class="fw-bold text-primary m-0">Book<span class="text-secondary"> Store</span></h1>
+                                </a>
                             </div>
                         </div>
 
-                        <div class="col-md-10">
-                            <nav id="navbar">
-                                <div class="main-menu stellarnav">
-                                    <ul class="menu-list">
-                                        <li class="menu-item active"><a href="Home.jsp">Home</a></li>
-                                        <li class="menu-item has-sub">
-                                            <a href="#" class="nav-link">Pages</a>
-                                            <ul>
-                                                <li><a href="About.jsp">About</a></li>
-                                                <li><a href="Styles.jsp">Styles</a></li>
-                                                <li><a href="Blog.jsp">Blog</a></li>
-                                                <li><a href="PostSingle.jsp">Post Single</a></li>
-                                                <li><a href="Store.jsp">Our Store</a></li>
-                                                <li><a href="ProductSingle.jsp">Product Single</a></li>
-                                                <li><a href="Contact.jsp">Contact</a></li>
-                                            </ul>
-                                        </li>
-                                        <li class="menu-item"><a href="FeaturedBooks.jsp">Featured</a></li>
-                                        <li class="menu-item"><a href="PopularBooks.jsp">Popular</a></li>
-                                        <li class="menu-item"><a href="SpecialOffer.jsp">Offer</a></li>
-                                        <li class="menu-item"><a href="LatestBlog.jsp">Articles</a></li>
-                                        <li class="menu-item"><a href="DownloadApp.jsp">Download App</a></li>
+                        <!-- Menu chính -->
+                        <div class="col d-flex align-items-center">
+                            <nav id="navbar" class="w-100">
+                                <div class="main-menu stellarnav d-flex w-100">
+                                    <!-- Home giữ nguyên bên trái -->
+                                    <ul class="menu-list d-flex justify-content-start">
+                                        <li class="menu-item active"><a href="index.jsp">Home</a></li>
                                     </ul>
 
-                                    <div class="hamburger">
-                                        <span class="bar"></span>
-                                        <span class="bar"></span>
-                                        <span class="bar"></span>
-                                    </div>
+                                    <!-- Đưa Danh mục sách cùng nhóm với Hồ sơ & Logout (căn phải) -->
+                                    <ul class="menu-list d-flex ms-auto">
+                                        <li class="menu-item has-sub">
+                                            <a href="#" class="nav-link">Danh mục sách</a>
+
+                                            <ul class="mega-menu">
+                                                <div class="menu-row">
+                                                    <c:set var="itemsPerColumn" value="5" />
+                                                    <c:set var="numColumns" value="${(totalCategories / itemsPerColumn) + (totalCategories % itemsPerColumn == 0 ? 0 : 1)}" />
+
+                                                    <c:forEach var="cate" items="${categories}" varStatus="status">
+                                                        <c:if test="${status.index % itemsPerColumn == 0}">
+                                                            <div class="menu-column"> <!-- Mở cột mới -->
+                                                            </c:if>
+
+                                                            <li><a href="Category.jsp?id=${cate.categoryId}">${cate.categoryName}</a></li>
+
+                                                            <c:if test="${status.index % itemsPerColumn == itemsPerColumn - 1 or status.last}">
+                                                            </div> <!-- Đóng cột -->
+                                                        </c:if>
+                                                    </c:forEach>
+                                                </div>
+                                            </ul>
+                                                    
+                                        </li>
+
+                                        <li class="menu-item"><a class="nav-link" href="UserProfile.jsp">Hồ sơ</a></li>
+                                        <li class="menu-item"><a class="nav-link" href="logout">Logout</a></li>
+                                    </ul>
                                 </div>
                             </nav>
                         </div>
 
+                        <!-- Hamburger menu -->
+                        <div class="col-auto">
+                            <div class="hamburger">
+                                <span class="bar"></span>
+                                <span class="bar"></span>
+                                <span class="bar"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </header>
+
+
         </div><!--header-wrap-->
     </body>
 </html>
